@@ -1,0 +1,29 @@
+# 工作流名称，不设置的话默认取配置文件名
+name: md2pdf
+# 指定触发 workflow 的条件
+# 指定触发事件时，可以限定分支或标签
+# 当前是 只有 branches 分支上触发 push 事件时才执行工作流任务
+on:
+  push:
+    branches:
+      - main
+
+# 工作流执行的一个或多个任务
+jobs:
+  # 任务名称
+  test-conversion:
+    # 任务运行的容器类型（虚拟机环境）
+    runs-on: ubuntu-latest
+    name: Convert README to PDF
+    steps:
+      # 步骤名称
+      - name: Checkout
+        uses: actions/checkout@v2  
+      - name: Convert README
+        uses: willfantom/md2pdf-action@v1
+        id: md2pdf
+        with:
+          markdownSrcPattern: "README.md"
+      - name: Check Conversion
+        run: '[[ "${{ steps.md2pdf.outputs.convertedFiles }}" == "README" ]] && echo "Converted" || exit 1'
+
