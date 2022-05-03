@@ -14,16 +14,22 @@ jobs:
   test-conversion:
     # 任务运行的容器类型（虚拟机环境）
     runs-on: ubuntu-latest
-    name: Convert README to PDF
+    name: md2pdf
     steps:
       # 步骤名称
       - name: Checkout
         uses: actions/checkout@v2  
+
       - name: Convert README
         uses: willfantom/md2pdf-action@v1
         id: md2pdf
         with:
           markdownSrcPattern: "README.md"
+
       - name: Check Conversion
         run: '[[ "${{ steps.md2pdf.outputs.convertedFiles }}" == "README" ]] && echo "Converted" || exit 1'
 
+      - uses: actions/upload-artifact@master
+        with:
+          name: build-${{ github.run_number }}
+          path: release/readme.pdf
